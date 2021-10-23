@@ -1,84 +1,79 @@
 var textInput = "";
 var id = "";
 
-var time = moment();
-console.log(time);
+//get the current moment
+var time = moment().format("dddd, MMMM Do");
 
-
-var hour = moment().hour();
-
-loadTasks();
+//append text to the #currentDay id
+$("#currentDay").text(time);
 
 //load all todo items in localstorage
 var loadTasks = function () {
-  var hour9 = localStorage.getItem("hour9");
-  $("#hour9").append(hour9);
-  
-  var hour10 =localStorage.getItem("hour10");
-  $("#hour10").append(hour10);
-  
-  var hour11 =localStorage.getItem("hour11");
-  $("#hour11").append(hour11);
-  
-  var hour12 =localStorage.getItem("hour12");
-  $("#hour12").append(hour12);
-  
-  var hour13 =localStorage.getItem("hour13");
-  $("#hour13").append(hour13);
-  
-  var hour14 =localStorage.getItem("hour14");
-  $("#hour14").append(hour14);
-  
-  var hour15 =localStorage.getItem("hour15");
-  $("#hour15").append(hour15);
-  
-  var hour16 =localStorage.getItem("hour16");
-  $("#hour16").append(hour16);
-  
-  var hour17 =localStorage.getItem("hour17");
-  $("#hour17").append(hour17);
-  }
-  
 
-if (hour = 9){
-  $('hour9').addClass('present');
-  $('hour10').addClass('future');
-  $('hour11').addClass('future');
-  $('hour12').addClass('future');
-  $('hour13').addClass('future');
-  $('hour14').addClass('future');
-  $('hour15').addClass('future');
-  $('hour16').addClass('future');
-  $('hour17').addClass('future');
-} else if (hour = 10) {
+  //set the text of the time blocks from saved todo items
+  for (i = 9; i <= 17; i++) {
+    var schedulerHour = "#hour" + i;
+    var savedTaskHour = "hour" + i;
+    var savedTask = localStorage.getItem(savedTaskHour);
+    $(schedulerHour).append(savedTask);
+  }
+}
+
+//load all the saved todo items
+loadTasks();
+
+//function to set the time block colors based on the current time
+var colors = function () {
+  //get the current hour
+  var hour = moment().hour();
+
+  //set the colors for time blocks
+  for (i = 9; i <= 17; i++) {
+    var currentHour = "#hour" + i;
+    if (hour < i) {
+      $(currentHour).css('background-color', '#77dd77');
+    } else if (hour == i) {
+      $(currentHour).css('background-color', '#ff6961');
+    } else if (hour > i) {
+      $(currentHour).css('background-color', '#d3d3d3');
+    }
+  }
 
 }
 
+//set the colors for the timeblocks
+colors();
 
-
-// task text was clicked
+// time block was clicked
 $(".textarea").on("click", function () {
-
-  // get current text of element clicked
+  // get current text of time block element clicked
   var text = $(this)
-   .text()
-   .trim();
+    .text()
+    .trim();
 
-   //get id of clicked element to use to save for localstorage
-   id = $(this).attr('id');
+  //get id of clicked time block element to use to save for localstorage
+  id = $(this).attr('id');
 
-  // replace element clicked with a new textarea
-  textInput = $("<textarea>").addClass("col-10").addClass("textarea").val(text);
+  // replace time block element clicked with a new textarea
+  textInput = $("<textarea>").addClass("col-10").addClass("textarea").attr('id', id).val(text);
   $(this).replaceWith(textInput);
 
-  // auto focus on clicked element
+
+  // auto focus on clicked time block element
   textInput.trigger("focus");
 });
 
+
+ $("id").on("blur", function () {
+  colors();
+ });
+
 //save button is clicked
 $(".saveBtn").on("click", function () {
-
-//save todo item to localstorage with id of clicked element
-localStorage.setItem(id, textInput.val());
+  //save todo item to localstorage with id of clicked element
+  localStorage.setItem(id, textInput.val());
+  colors();
 });
+
+
 
